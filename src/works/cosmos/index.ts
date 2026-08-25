@@ -136,7 +136,9 @@ class CosmosWork implements Work {
     this.position = new PingPong(this.size, this.size)
     this.velocity = new PingPong(this.size, this.size)
 
-    const shell = generateShell(this.count, WORLD_WIDTH * 0.75)
+    // 開いた直後の姿。広げすぎると画面いっぱいのモヤになるので、
+    // 「集まってくる」動きが見える大きさに収める
+    const shell = generateShell(this.count, WORLD_WIDTH * 0.5)
     const shellTexture = createDataTexture(shell, this.size, this.size)
     seedPingPong(renderer, this.position, shellTexture)
     shellTexture.dispose()
@@ -431,18 +433,25 @@ class CosmosWork implements Work {
   }
 }
 
-/** 入力を 2 行までに整える。長い一行は真ん中の空白で折る。 */
+/**
+ * 入力を 2 行までに整える。
+ * 一行が長いと文字が小さくなりすぎるので、真ん中あたりで折る。
+ * 空白があればそこで、無ければ（日本語など）文字数の真ん中で折る。
+ */
 function normalizeText(raw: string): string {
   const text = raw.replace(/\s+/g, ' ').trim().slice(0, 24)
   if (!text) return ''
-  if (text.includes('\n')) return text
   if (text.length <= 8) return text
 
-  const spaces = [...text.matchAll(/ /g)].map((m) => m.index ?? -1).filter((i) => i > 0)
-  if (spaces.length === 0) return text
   const middle = text.length / 2
-  const best = spaces.reduce((a, b) => (Math.abs(b - middle) < Math.abs(a - middle) ? b : a))
-  return `${text.slice(0, best)}\n${text.slice(best + 1)}`
+  const spaces = [...text.matchAll(/ /g)].map((m) => m.index ?? -1).filter((i) => i > 0)
+  if (spaces.length > 0) {
+    const best = spaces.reduce((a, b) => (Math.abs(b - middle) < Math.abs(a - middle) ? b : a))
+    return `${text.slice(0, best)}\n${text.slice(best + 1)}`
+  }
+  if (text.length <= 11) return text
+  const at = Math.round(middle)
+  return `${text.slice(0, at)}\n${text.slice(at)}`
 }
 
 function clamp(value: number, min: number, max: number): number {

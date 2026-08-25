@@ -41,7 +41,7 @@ export const WORKS: WorkMeta[] = [
   {
     id: 'cosmos',
     title: '言葉から生まれる宇宙',
-    desc: '入力した文字が26万個の光の粒になり、崩れて銀河になる。',
+    desc: '入力した文字が最大26万個の光の粒になり、崩れて銀河になる。',
     hint: 'マウスを動かすと粒が逃げる ／ 文字を入れ替えると宇宙が作り直される',
     accentA: '#64e6ff',
     accentB: '#b06cff',
@@ -51,7 +51,7 @@ export const WORKS: WorkMeta[] = [
     id: 'fluid',
     title: '指先の流体',
     desc: 'マウスの軌跡が渦を巻いて滲む。本物の流体方程式をGPUで解いている。',
-    hint: 'ドラッグでかき混ぜる ／ クリックで色を落とす',
+    hint: 'マウスを動かすとかき混ぜられる ／ クリックすると強く弾ける',
     accentA: '#ff5f9e',
     accentB: '#ffd166',
     load: () => import('../works/fluid/index'),
@@ -59,7 +59,7 @@ export const WORKS: WorkMeta[] = [
   {
     id: 'fractal',
     title: '無限フラクタル',
-    desc: 'たった一つの数式が生む世界を、どこまでも拡大していける。',
+    desc: 'たった一つの数式が生む世界を、260億倍まで拡大していける。',
     hint: 'ホイールで拡大縮小 ／ ドラッグで移動',
     accentA: '#ffb347',
     accentB: '#3d6bff',

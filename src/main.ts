@@ -80,6 +80,8 @@ function boot(): void {
 
   window.addEventListener('hashchange', () => void route())
   window.addEventListener('keydown', (e) => {
+    // 入力欄で Esc を押しただけで一覧へ飛ばされると使いづらい
+    if (e.target instanceof HTMLInputElement) return
     if (e.key === 'Escape' && location.hash !== '' && location.hash !== '#/') go('#/')
   })
 
