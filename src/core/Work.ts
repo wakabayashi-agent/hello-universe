@@ -92,6 +92,24 @@ export const WORKS: WorkMeta[] = [
     accentB: '#5f8cff',
     load: () => import('../works/slime/index'),
   },
+  {
+    id: 'metro',
+    title: '地下の星座',
+    desc: '東京メトロ9路線・約180駅。実際の線形の上を、光の列車が休まず走り続ける。',
+    hint: 'ドラッグで地下をのぞき込む ／ ホイールで近づく ／ クリックで路線を選ぶ',
+    accentA: '#ff4d42',
+    accentB: '#2fc4b2',
+    load: () => import('../works/metro/index'),
+  },
+  {
+    id: 'solar',
+    title: 'うごく太陽系儀',
+    desc: '本物の軌道の式で8つの惑星が回る。近づけば、表面の模様まで全部が数式。',
+    hint: '惑星をクリックすると近づく ／ ドラッグで回り込む ／ ホイールで距離',
+    accentA: '#ffd27a',
+    accentB: '#7db8ff',
+    load: () => import('../works/solar/index'),
+  },
 ]
 
 export function findWork(id: string): WorkMeta | undefined {

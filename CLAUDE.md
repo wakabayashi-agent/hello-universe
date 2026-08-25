@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## このリポジトリについて
 
-高校生に「コードでここまで作れる」を見せるためのデモ用サイト。数式と GPU 計算だけで描く6つの
+高校生に「コードでここまで作れる」を見せるためのデモ用サイト。数式と GPU 計算だけで描く8つの
 インタラクティブ作品を、1つの静的サイトに収めている。画像・動画・外部APIは一切使わない。
 
 公開先: https://wakabayashi-agent.github.io/hello-universe/
@@ -15,7 +15,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 放置しても画面が動き続ける仕掛け（cosmos の19秒周期、fluid の自動スプラット、
 fractal の14秒放置で自動ツアー開始、blackhole の常時自動周回、slime のリサージュ
-仮想フィーダー）はこの要件から来ているので、壊さないこと。
+仮想フィーダー、metro の常時運行+路線紹介ループ、solar の惑星巡りツアー）は
+この要件から来ているので、壊さないこと。
 
 ## コマンド
 
