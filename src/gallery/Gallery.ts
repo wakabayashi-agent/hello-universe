@@ -24,7 +24,7 @@ export function renderGallery(container: HTMLElement, onSelect: (id: string) => 
     el('div', { class: 'gallery' }, [
       el('header', { class: 'gallery__head' }, [
         el('div', { class: 'gallery__mark' }, ['Hello, Universe']),
-        el('div', { class: 'gallery__sub' }, ['4つのインタラクティブ作品']),
+        el('div', { class: 'gallery__sub' }, ['6つのインタラクティブ作品']),
       ]),
       el('footer', { class: 'gallery__foot' }, [
         el('p', { class: 'gallery__lead' }, [

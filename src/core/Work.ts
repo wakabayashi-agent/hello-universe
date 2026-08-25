@@ -74,6 +74,24 @@ export const WORKS: WorkMeta[] = [
     accentB: '#ff7a3d',
     load: () => import('../works/gravity/index'),
   },
+  {
+    id: 'blackhole',
+    title: 'ブラックホール',
+    desc: '光の進む道をアインシュタインの式で計算すると、この姿が浮かび上がる。',
+    hint: 'ドラッグで回り込む ／ ホイールで近づく',
+    accentA: '#ffa64d',
+    accentB: '#7fb4ff',
+    load: () => import('../works/blackhole/index'),
+  },
+  {
+    id: 'slime',
+    title: '百万匹の粘菌',
+    desc: '最大100万匹の粘菌が、フェロモンの痕跡だけで生きた血管網を織り上げる。',
+    hint: 'マウスを動かすと餌につられて網が伸びる ／ 押しっぱなしで蹴散らす',
+    accentA: '#7dffa8',
+    accentB: '#5f8cff',
+    load: () => import('../works/slime/index'),
+  },
 ]
 
 export function findWork(id: string): WorkMeta | undefined {

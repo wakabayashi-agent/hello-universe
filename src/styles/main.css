@@ -165,7 +165,7 @@ body::after {
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(0.5rem, 1vw, 0.9rem);
 }
 
