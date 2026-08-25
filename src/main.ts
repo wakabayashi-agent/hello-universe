@@ -63,19 +63,43 @@ function boot(): void {
     const id = location.hash.replace(/^#\/?/, '').trim()
     clear(overlay)
 
-    const meta = findWork(id)
-    if (!meta) {
-      // トップページ：背景で cosmos を流しつつ作品カードを並べる
-      renderGallery(overlay, (next) => go(`#/${next}`))
-      await stage.mount(WORKS[0], {
-        hero: true,
-        text: customText ?? 'HELLO,\nUNIVERSE',
-      })
-    } else {
-      renderWorkChrome(overlay, meta, () => go('#/'))
-      await stage.mount(meta, meta.id === 'cosmos' ? { text: customText ?? undefined } : {})
+    try {
+      const meta = findWork(id)
+      if (!meta) {
+        // トップページ：背景で cosmos を流しつつ作品カードを並べる
+        renderGallery(overlay, (next) => go(`#/${next}`))
+        await stage.mount(WORKS[0], {
+          hero: true,
+          text: customText ?? 'HELLO,\nUNIVERSE',
+        })
+      } else {
+        renderWorkChrome(overlay, meta, () => go('#/'))
+        await stage.mount(meta, meta.id === 'cosmos' ? { text: customText ?? undefined } : {})
+      }
+    } catch (error) {
+      // 作品は動的 import で読み込むので、更新直後に古いキャッシュが残っていると
+      // 存在しないファイルを取りにいって失敗することがある。
+      // ここで拾わないと起動画面が回りっぱなしになる
+      console.error(error)
+      showLoadError()
+    } finally {
+      finishBoot()
     }
-    finishBoot()
+  }
+
+  function showLoadError(): void {
+    clear(overlay)
+    overlay.append(
+      el('div', { class: 'fatal' }, [
+        el('strong', {}, ['読み込みに失敗しました']),
+        el('p', {}, ['通信が不安定か、古いデータが残っている可能性があります。']),
+        el(
+          'button',
+          { class: 'chip', type: 'button', onclick: () => location.reload() },
+          ['再読み込み'],
+        ),
+      ]),
+    )
   }
 
   window.addEventListener('hashchange', () => void route())

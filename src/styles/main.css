@@ -83,6 +83,7 @@ body::after {
   color: var(--ink-dim);
 }
 .fatal strong { display: block; font-size: 1.3rem; color: var(--ink); font-weight: 700; }
+.fatal .chip { justify-self: center; }
 
 /* ---------- 共通パーツ ---------- */
 
