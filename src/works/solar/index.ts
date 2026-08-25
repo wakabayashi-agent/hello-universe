@@ -109,7 +109,7 @@ class SolarWork implements Work {
   private internalScale = 1
   private bloomTexel = new THREE.Vector2()
 
-  // カメラ状態（blackhole 式の球座標+慣性を focus 点回りに）
+  // カメラ状態（metro と同じ球座標+慣性モデルを focus 点回りに）
   private azimuth = OVERVIEW.azimuth
   private incl = OVERVIEW.incl
   private radius = OVERVIEW.radius

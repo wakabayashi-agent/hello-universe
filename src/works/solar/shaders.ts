@@ -453,7 +453,7 @@ void main() {
 }
 `
 
-/** 星空球（BackSide）。blackhole の starLayer を移植。輝度は 1 未満に抑える。 */
+/** 星空球（BackSide）。セルごとの hash で星を撒く手続き星空。輝度は 1 未満に抑える。 */
 export const STARS_VERT = /* glsl */ `
 varying vec3 vDir;
 

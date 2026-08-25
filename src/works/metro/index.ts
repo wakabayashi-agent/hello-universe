@@ -107,7 +107,7 @@ class MetroWork implements Work {
   private internalScale = 1
   private bloomTexel = new THREE.Vector2()
 
-  // カメラ状態（blackhole と同じ球座標+慣性モデル）
+  // カメラ状態（球座標+慣性。ドラッグと自動演出が同じ変数に合流する）
   private azimuth = HOME.azimuth
   private incl = HOME.incl
   private radius = HOME.radius
@@ -617,7 +617,7 @@ class MetroWork implements Work {
   update(dt: number, elapsed: number): void {
     const step = Math.min(dt, 1 / 30)
 
-    // 放置検出と自動演出（blackhole と同じ合流のさせ方）
+    // 放置検出と自動演出（操作と同じ状態変数への加算で自然に合流させる）
     const wantAuto = !this.dragging && pointer.idleFor(4000) ? 1 : 0
     this.autoWeight += (wantAuto - this.autoWeight) * Math.min(1, step * 1.5)
     this.azimuth += AUTO_SPIN * this.autoWeight * step

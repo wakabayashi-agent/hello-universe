@@ -189,7 +189,7 @@ void main() {
 }
 `
 
-/** しきい値より明るい成分だけを取り出す（ソフトニー）。blackhole と同型。 */
+/** しきい値より明るい成分だけを取り出す（ソフトニー）。lightning と同型。 */
 export const BRIGHT_FRAG = /* glsl */ `
 precision highp float;
 varying vec2 vUv;
