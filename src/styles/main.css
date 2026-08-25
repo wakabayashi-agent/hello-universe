@@ -1,0 +1,303 @@
+:root {
+  --bg: #05060d;
+  --ink: #eef2ff;
+  --ink-dim: #9aa3c4;
+  --ink-faint: #5d6486;
+  --line: rgba(160, 175, 235, 0.16);
+  --line-strong: rgba(180, 195, 255, 0.4);
+  --panel: rgba(10, 12, 24, 0.55);
+
+  --cosmos-a: #64e6ff;
+  --cosmos-b: #b06cff;
+  --fluid-a: #ff5f9e;
+  --fluid-b: #ffd166;
+  --fractal-a: #ffb347;
+  --fractal-b: #3d6bff;
+  --gravity-a: #fff1c9;
+  --gravity-b: #ff7a3d;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --font: "Zen Kaku Gothic New", -apple-system, BlinkMacSystemFont, "Hiragino Sans",
+    "Yu Gothic UI", "Meiryo", sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body { overscroll-behavior: none; }
+
+#stage {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+  touch-action: none;
+}
+
+/* 画面全体にごく薄いビネットを敷いて、粒子の白飛びを締める */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(130% 100% at 50% 45%, transparent 58%, rgba(0, 0, 0, 0.42) 100%);
+}
+
+#overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+}
+
+#overlay > * { pointer-events: auto; }
+
+.fatal {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-content: center;
+  gap: 0.8rem;
+  padding: 2rem;
+  text-align: center;
+  background: var(--bg);
+  font-size: 1rem;
+  line-height: 1.9;
+  color: var(--ink-dim);
+}
+.fatal strong { display: block; font-size: 1.3rem; color: var(--ink); font-weight: 700; }
+
+/* ---------- 共通パーツ ---------- */
+
+.eyebrow {
+  font-size: 0.66rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+
+.chip {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--ink-dim);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease),
+    background 0.25s var(--ease);
+}
+.chip:hover { color: var(--ink); border-color: var(--line-strong); }
+.chip[aria-pressed="true"] {
+  color: var(--bg);
+  background: var(--ink);
+  border-color: transparent;
+}
+
+/* ---------- ギャラリー ---------- */
+
+.gallery {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(1.1rem, 3vw, 2.2rem);
+  animation: fade-up 0.9s var(--ease) both;
+}
+
+.gallery__head { display: flex; flex-direction: column; gap: 0.35rem; }
+.gallery__mark {
+  font-size: 0.78rem;
+  letter-spacing: 0.4em;
+  font-weight: 700;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.gallery__sub { font-size: 0.74rem; color: var(--ink-faint); letter-spacing: 0.14em; }
+
+.gallery__foot { display: flex; flex-direction: column; gap: 0.9rem; }
+
+.gallery__lead {
+  max-width: 34rem;
+  font-size: clamp(0.82rem, 1.6vw, 0.95rem);
+  line-height: 2;
+  color: var(--ink-dim);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.5rem, 1vw, 0.9rem);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: clamp(0.85rem, 1.5vw, 1.15rem);
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+  transition: transform 0.5s var(--ease), border-color 0.5s var(--ease);
+}
+
+/* アクセントのにじみ。ホバーで立ち上がる */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: -40% -10% auto -10%;
+  height: 130%;
+  z-index: -1;
+  background: radial-gradient(60% 70% at 20% 0%, var(--a) 0%, transparent 70%),
+    radial-gradient(70% 80% at 90% 10%, var(--b) 0%, transparent 72%);
+  opacity: 0.13;
+  transform: translateY(6%);
+  transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+}
+
+.card:hover, .card:focus-visible {
+  transform: translateY(-5px);
+  border-color: var(--line-strong);
+  outline: none;
+}
+.card:hover::before, .card:focus-visible::before { opacity: 0.42; transform: translateY(0); }
+
+.card__index {
+  font-size: 0.62rem;
+  letter-spacing: 0.3em;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+.card__title {
+  font-size: clamp(0.98rem, 1.9vw, 1.22rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+}
+.card__desc {
+  font-size: 0.75rem;
+  line-height: 1.85;
+  color: var(--ink-dim);
+}
+
+/* ---------- 作品ビュー ---------- */
+
+.work { flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(1.1rem, 3vw, 2.2rem); }
+.work__bar { display: flex; align-items: center; gap: 0.8rem; animation: fade-down 0.6s var(--ease) both; }
+.work__title { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.16em; }
+.work__spacer { flex: 1; }
+
+.work__foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  animation: fade-up 0.7s 0.1s var(--ease) both;
+}
+.work__hint {
+  font-size: 0.74rem;
+  line-height: 1.9;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+.work__controls { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* cosmos のテキスト入力 */
+.wordform { display: flex; gap: 0.5rem; align-items: center; }
+.wordform input {
+  width: min(17rem, 46vw);
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  transition: border-color 0.25s var(--ease);
+}
+.wordform input::placeholder { color: var(--ink-faint); }
+.wordform input:focus { outline: none; border-color: var(--line-strong); }
+
+.badge {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- ローディング ---------- */
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  justify-items: center;
+  background: var(--bg);
+  transition: opacity 0.7s var(--ease);
+}
+.boot--gone { opacity: 0; pointer-events: none; }
+.boot__ring {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(160, 175, 235, 0.2);
+  border-top-color: var(--cosmos-a);
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes fade-down { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+
+/* ---------- 狭い画面 ---------- */
+
+@media (max-width: 900px) {
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gallery__lead { display: none; }
+}
+@media (max-width: 520px) {
+  .card__desc { display: none; }
+  .work__hint { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gallery, .work__bar, .work__foot { animation: none; }
+}
