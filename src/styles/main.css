@@ -66,7 +66,21 @@ body::after {
   flex-direction: column;
 }
 
-#overlay > * { pointer-events: auto; }
+/*
+ * オーバーレイは画面全体を覆っているので、既定ではポインタを素通しさせる。
+ * ここを「直下の子だけ auto」にすると、レイアウト用の全画面コンテナ
+ * （.work / .gallery）がクリックを飲み込み、背後の canvas に
+ * イベントが一切届かなくなる（フラクタルの拡大・重力の星を置く操作が死ぬ）。
+ * 実際に操作する要素だけを auto に戻す。
+ */
+#overlay,
+#overlay * { pointer-events: none; }
+
+#overlay button,
+#overlay input,
+#overlay select,
+#overlay textarea,
+#overlay a { pointer-events: auto; }
 
 .fatal {
   position: fixed;
