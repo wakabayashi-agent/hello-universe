@@ -82,6 +82,8 @@ class FractalWork implements Work {
   private ui: HTMLElement | null = null
   private tourChip: HTMLButtonElement | null = null
   private juliaChip: HTMLButtonElement | null = null
+  private zoomLabel: HTMLElement | null = null
+  private zoomText = ''
 
   mount(ctx: WorkContext): void {
     const { renderer, quality } = ctx
@@ -115,6 +117,14 @@ class FractalWork implements Work {
   }
 
   private buildUI(overlay: HTMLElement): void {
+    // 何もない外側まで潜ると絵が変わらなくなる。
+    // 倍率が出ていれば「拡大は効いている」ことが目で分かる
+    const bar = overlay.querySelector<HTMLElement>('.work__bar')
+    if (bar) {
+      this.zoomLabel = el('span', { class: 'badge' }, ['等倍'])
+      bar.append(this.zoomLabel)
+    }
+
     const controls = overlay.querySelector<HTMLElement>('.work__controls')
     if (!controls) return
 
@@ -174,7 +184,14 @@ class FractalWork implements Work {
   private onWheel = (event: WheelEvent): void => {
     event.preventDefault()
     this.stopTour()
-    const factor = Math.exp(event.deltaY * 0.0016)
+    // deltaY の単位はブラウザによって px / 行 / ページと違う。
+    // Chrome・Safari は1ノッチ ≒ 100px だが、Firefox は「3行」で返してくる。
+    // 揃えずに使うと Firefox ではほとんど拡大できない。
+    // 勢いよく回したときに飛びすぎないよう上限も切る
+    let pixels = event.deltaY
+    if (event.deltaMode === 1) pixels *= 33
+    else if (event.deltaMode === 2) pixels *= 300
+    const factor = Math.exp(clamp(pixels, -300, 300) * 0.0022)
     const next = clamp(this.span * factor, MIN_SPAN, MAX_SPAN)
     const applied = next / this.span
     // カーソルの下にある点が動かないように中心をずらす
@@ -249,7 +266,16 @@ class FractalWork implements Work {
       )
     }
 
+    this.updateZoomLabel()
     this.pass.render(this.renderer, null)
+  }
+
+  private updateZoomLabel(): void {
+    if (!this.zoomLabel) return
+    const text = this.julia ? '' : formatZoom(HOME.span / this.span)
+    if (text === this.zoomText) return
+    this.zoomText = text
+    this.zoomLabel.textContent = text
   }
 
   /**
@@ -346,6 +372,22 @@ class FractalWork implements Work {
     this.orbitTexture.dispose()
     this.pass.dispose()
   }
+}
+
+/** 倍率を日本語の単位で読みやすく整える。 */
+function formatZoom(times: number): string {
+  if (times < 1.05) return '等倍'
+  if (times < 1e4) return `${Math.round(times).toLocaleString('ja-JP')}倍`
+  if (times < 1e8) return `${significant(times / 1e4)}万倍`
+  if (times < 1e12) return `${significant(times / 1e8)}億倍`
+  return `${significant(times / 1e12)}兆倍`
+}
+
+/** toPrecision は 1000 以上で指数表記になってしまうので自前で桁を丸める。 */
+function significant(value: number): string {
+  if (value < 10) return value.toFixed(2)
+  if (value < 100) return value.toFixed(1)
+  return Math.round(value).toLocaleString('ja-JP')
 }
 
 function clamp(value: number, min: number, max: number): number {

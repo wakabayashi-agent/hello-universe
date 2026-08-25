@@ -108,13 +108,22 @@ void main() {
 
   // 反復回数を連続値に均す（そのままだと等高線のような縞が出る）
   float smoothIter = iter - log2(max(log2(m2) * 0.5, 1e-6));
-  // sqrt をかますと浅いところは粗く深いところは細かく縞が入り、
-  // どの倍率でも情報量が同じくらいに見える
-  float t = sqrt(max(smoothIter, 0.0)) * 0.155 + uPaletteShift;
+
+  // 色の縞は反復回数に「比例」させる。
+  // sqrt や log で圧縮すると、深く潜るほど縞の幅が広がってしまい、
+  // 発散回数の差が数回しかない領域が画面いっぱいのべた塗りになる
+  float t = smoothIter * (1.0 / 46.0) + uPaletteShift;
   vec3 color = palette(t);
 
-  // 集合から遠い（すぐ発散する）領域は落ち着かせて、境界付近を目立たせる
-  color *= 0.35 + 0.65 * smoothstep(0.0, 14.0, smoothIter);
+  // 明るさは「その倍率で見たときに、どれくらい集合に近いか」で決める。
+  //
+  // 固定のしきい値で暗くすると、全体像では手前の縞まで潰れ、
+  // 逆に深部では何もない外側まで明るくなってしまう。
+  // 反復回数の予算（＝深さに比例して増える）を基準にすると、
+  // どの倍率でも「外側は暗く、境界は輝く」が成り立つ
+  float reach = max(float(uIterations) * 0.6, 30.0);
+  float nearness = clamp(smoothIter / reach, 0.0, 1.0);
+  color *= 0.10 + 0.90 * pow(nearness, 0.55);
 
   gl_FragColor = vec4(color, 1.0);
 }
